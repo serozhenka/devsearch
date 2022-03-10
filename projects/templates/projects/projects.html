@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+        {% for project in projects %}
+            <div style="margin-bottom: 2rem">
+                <h3><a href="{% url 'project' project.id %}">{{ project.title }}</a>
+                    <a href="{% url 'update-project' project.id %}">update</a>
+                    <a href="{% url 'delete-project' project.id %}">delete</a>
+                </h3>
+                <p>{{ project.description }}</p>
+                <p>{{ project.vote_total }} votes with {{ project.vote_ratio }}% vote ratio</p>
+
+            </div>
+        {% endfor %}
+
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div style="margin-bottom: 2rem">
+        <h3><a href="{% url 'project' project.id %}">{{ project.title }}</a></h3>
+        <p>{{ project.description }}</p>
+        <p>{{ project.vote_total }} votes with {{ project.vote_ratio }}% vote ratio</p>
+    </div>
+
+    {% for tag in project.tags.all %}
+        <span style="border: 2px solid gray; border-radius: 5px">
+            {{ tag.name }}
+        </span>
+    {% endfor %}
+{% endblock %}

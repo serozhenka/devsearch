@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Project form</h1>
+
+    <form method="POST" action="">
+        {% csrf_token %}
+
+        {% for field in form %}
+            <div>{{ field.label }}</div>
+            {{ field }}
+        {% endfor %}
+
+        <input type="submit" value="Submit">
+    </form>
+{% endblock %}
