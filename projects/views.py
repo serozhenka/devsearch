@@ -36,7 +36,7 @@ def create_project(request):
         return render(request, 'projects/project_form.html', context={'form': form})
 
     elif request.method == "POST":
-        form = ProjectForm(request.POST)
+        form = ProjectForm(request.POST, request.FILES)
 
         if form.is_valid():
             form.save()
@@ -49,7 +49,7 @@ def update_project(request, pk):
         form = ProjectForm(instance=projectObj)
         return render(request, 'projects/project_form.html', context={'form': form})
     elif request.method == "POST":
-        form = ProjectForm(request.POST, instance=projectObj)
+        form = ProjectForm(request.POST, request.FILES, instance=projectObj)
         if form.is_valid():
             form.save()
             return redirect('project', projectObj.id)
