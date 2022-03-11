@@ -1,7 +1,9 @@
 import uuid
 from django.db import models
+from users.models import Profile
 
 class Project(models.Model):
+    owner = models.ForeignKey(Profile, null=True, blank=True, on_delete=models.SET_NULL)
     title = models.CharField(max_length=128)
     description = models.TextField(null=True, blank=True)
     featured_image = models.ImageField(default='project_images/default.jpg', null=True, blank=True, upload_to='project_images')
