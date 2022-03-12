@@ -647,10 +647,8 @@ img {
     position: relative;
     z-index: 1;
     background: transparent;
-    height: 99vh;
     display: flex;
     justify-content: center;
-    align-items: center;
 }
 
 .auth::after {
@@ -855,4 +853,15 @@ img {
 
 .link_onHover:hover {
     color: #79C0D5FF;
+}
+
+.messages_container {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    max-width: 65rem;
+    margin: 2rem auto 0 auto;
+    width: 95%;
+    z-index: 999;
+    position: relative;
 }

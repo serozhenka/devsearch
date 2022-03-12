@@ -9,3 +9,9 @@ class UserRegisterForm(UserCreationForm, ModelForm):
         labels = {
             'first_name': 'Name',
         }
+
+    def __init__(self, *args, **kwargs):
+        super(UserRegisterForm, self).__init__(*args, **kwargs)
+
+        for _, field in self.fields.items():
+            field.widget.attrs.update({'class': 'input'})

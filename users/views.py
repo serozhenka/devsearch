@@ -33,6 +33,7 @@ def loginPage(request):
             user = User.objects.get(username=username)
         except:
             messages.error(request, 'This username does not exists')
+            return render(request, 'users/login_register.html', context={'pageName': 'login'})
 
         user = authenticate(request, username=username, password=password)
 

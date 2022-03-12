@@ -24,11 +24,11 @@
         {% include 'navbar.html' %}
 
         {% if messages %}
-            <div>
+            <div class="messages_container">
                 {% for message in messages %}
-                    <div class="alert  alert--{{message.tags}}">
-                        <p class="alert__message">{{message}}</p>
-                        <button class="alert__close">x</button>
+                    <div class="alert alert--{{ message.tags }}" style="">
+                        <p class="alert__message">{{ message }}</p>
+                        <button class="alert__close">⨯</button>
                     </div>
                 {% endfor %}
             </div>
