@@ -852,3 +852,7 @@ img {
     margin-bottom: 1rem;
     margin-top: 2rem;
 }
+
+.link_onHover:hover {
+    color: #79C0D5FF;
+}

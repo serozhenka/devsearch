@@ -37,7 +37,7 @@
                                     <div class="card__body">
                                         <h3 class="project__title">{{ project.title }}</h3>
                                         <p>
-                                            <a class="project__author" href="profile.html">
+                                            <a class="project__author" href="{% url 'user-profile' project.owner_id %}">
                                                 By
                                                 {% if project.owner %}
                                                     {{ project.owner.user.username }}
