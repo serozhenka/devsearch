@@ -8,9 +8,14 @@
             <div class="formWrapper">
                 <div style="display: flex; align-items: center">
                     <a class="backButton" href="{{ request.META.HTTP_REFERER }}"><i class="im im-angle-left"></i></a>
-                    {% if form.instance.title %}
-                        <span style="font-weight: bold; font-size: 3rem; margin-left: 1rem">{{ form.instance.title }}</span>
-                    {% endif %}
+
+                    <span style="font-weight: bold; font-size: 3rem; margin-left: 2rem">
+                        {% if form.instance.title %}
+                            {{ form.instance.title }}
+                        {% else %}
+                            Create project
+                        {% endif %}
+                    </span>
                 </div>
                 <br>
 

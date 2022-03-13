@@ -865,3 +865,9 @@ img {
     z-index: 999;
     position: relative;
 }
+
+.skill_tags {
+    display: inline-block;
+    min-width: 65px;
+    text-align: center;
+}

@@ -2,8 +2,9 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 from .models import Profile
-from .forms import UserRegisterForm
+from .forms import UserRegisterForm, ProfileForm
 
 def profilesPage(request):
     profiles = Profile.objects.all()
@@ -19,6 +20,28 @@ def userProfile(request, pk):
         'skills_with_bio': skills_with_bio,
         'skills_without_bio': skills_without_bio,
     })
+
+@login_required(login_url='login')
+def accountPage(request):
+    profile = request.user.profile
+
+    return render(request, 'users/account.html', context={
+        'profile': profile,
+    })
+
+@login_required(login_url='login')
+def editAccountPage(request):
+    if request.method == "GET":
+        form = ProfileForm(instance=request.user.profile)
+    elif request.method == "POST":
+        form = ProfileForm(request.POST, request.FILES, instance=request.user.profile)
+        if form.is_valid():
+            profile = form.save(commit=False)
+            profile.username = profile.username.lower()
+            profile.save()
+            return redirect('account')
+
+    return render(request, 'users/profile_form.html', context={'form': form, })
 
 def loginPage(request):
     if request.method == "GET":
@@ -62,7 +85,7 @@ def registerPage(request):
             user.username = user.username.lower()
             user.save()
             login(request, user)
-            return redirect('profiles')
+            return redirect('edit-account')
         else:
             messages.error(request, 'Oops, something went wrong!')
 

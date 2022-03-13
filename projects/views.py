@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from .models import Project
 from .forms import ProjectForm
+from django.http import HttpResponse
 
 # Create your views here.
 
@@ -41,12 +42,17 @@ def create_project(request):
         form = ProjectForm(request.POST, request.FILES)
 
         if form.is_valid():
-            form.save()
+            projectObj = form.save(commit=False)
+            projectObj.owner = request.user.profile
+            projectObj.save()
+
             return redirect('project', form.instance.id)
 
 @login_required(login_url='login')
 def update_project(request, pk):
     projectObj = Project.objects.get(id=pk)
+    if request.user.profile != projectObj.owner:
+        return HttpResponse('<h1>You are not allowed to update someone\'s project</h1>')
 
     if request.method == "GET":
         form = ProjectForm(instance=projectObj)
@@ -60,6 +66,8 @@ def update_project(request, pk):
 @login_required(login_url='login')
 def delete_project(request, pk):
     projectObj = Project.objects.get(id=pk)
+    if request.user.profile != projectObj.owner:
+        return HttpResponse('<h1>You are not allowed to delete someone\'s project</h1>')
 
     if request.method == "GET":
         return render(request, 'projects/delete_template.html', context={'obj': projectObj})
