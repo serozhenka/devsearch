@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <main class="formPage my-xl">
+        <div class="content-box">
+            <div class="formWrapper">
+
+                <div style="display: flex; align-items: center">
+                    <a class="backButton" href="{{ request.GET.next }}"><i class="im im-angle-left"></i></a>
+
+                    <span style="font-weight: bold; font-size: 3rem; margin-left: 2rem">
+                        {% if form.instance.name %}
+                            {{ form.instance.name }}
+                        {% else %}
+                            Create skill
+                        {% endif %}
+                    </span>
+
+                </div>
+                <br>
+
+                <form method="POST" action="">
+                    {% csrf_token %}
+
+                    {% for field in form %}
+                        <div class="form__field">
+                            <label for="formInput#text">{{ field.label }} </label>
+                            {{ field }}
+
+                            {% for error in field.errors %}
+                                <small style="color: red; font-size: 14px">{{ error }}</small><br>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+
+                    <input class="btn btn--sub btn--lg  my-md" type="submit" value="Submit" />
+                </form>
+
+            </div>
+        </div>
+    </main>
+
+{% endblock %}

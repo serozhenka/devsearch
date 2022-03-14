@@ -3,29 +3,12 @@ from django.contrib.auth.decorators import login_required
 from .models import Project
 from .forms import ProjectForm
 from django.http import HttpResponse
+from . import utils
 
 # Create your views here.
 
-projectsList = [
-    {
-        'id': '1',
-        'title': 'Ecommerce Website',
-        'description': 'Fully functional ecommerce website'
-    },
-    {
-        'id': '2',
-        'title': 'Portfolio Website',
-        'description': 'A personal website to write articles and display work'
-    },
-    {
-        'id': '3',
-        'title': 'Social Network',
-        'description': 'An open source project built by the community'
-    }
-]
-
 def projectsHome(request):
-    projects = Project.objects.all()
+    projects = utils.searchProjects(request)
     return render(request, 'projects/projects.html', context={'projects': projects})
 
 def project(request, pk):
@@ -70,7 +53,7 @@ def delete_project(request, pk):
         return HttpResponse('<h1>You are not allowed to delete someone\'s project</h1>')
 
     if request.method == "GET":
-        return render(request, 'projects/delete_template.html', context={'obj': projectObj})
+        return render(request, 'delete_template.html', context={'obj': projectObj})
     elif request.method == "POST":
         projectObj.delete()
         return redirect('projects-home')

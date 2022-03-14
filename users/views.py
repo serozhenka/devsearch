@@ -1,13 +1,16 @@
+from . import  utils
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.http import HttpResponse
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from .models import Profile
-from .forms import UserRegisterForm, ProfileForm
+from .forms import UserRegisterForm, ProfileForm, SkillForm
 
 def profilesPage(request):
-    profiles = Profile.objects.all()
+    profiles = utils.searchProfiles(request)
+
     return render(request, 'users/profiles.html', context={'profiles': profiles, })
 
 def userProfile(request, pk):
@@ -90,3 +93,48 @@ def registerPage(request):
             messages.error(request, 'Oops, something went wrong!')
 
     return render(request, 'users/login_register.html', context={'pageName': 'register', 'form': form})
+
+@login_required(login_url='login')
+def create_skill(request):
+    if request.method == "GET":
+        form = SkillForm()
+    elif request.method == "POST":
+        form = SkillForm(request.POST)
+        if form.is_valid():
+            skill = form.save(commit=False)
+            skill.owner = request.user.profile
+            skill.save()
+            return redirect('account')
+
+    return render(request, 'users/skill_form.html', context={'form': form})
+
+
+@login_required(login_url='login')
+def update_skill(request, pk):
+    skillObj = request.user.profile.skill_set.get(id=pk)
+
+    if request.user.profile != skillObj.owner:
+        return HttpResponse('<h1>You are not allowed to update someone\'s skill</h1>')
+
+    if request.method == "GET":
+        form = SkillForm(instance=skillObj)
+    elif request.method == "POST":
+        form = SkillForm(request.POST, instance=skillObj)
+        if form.is_valid():
+            form.save()
+            return redirect('account')
+
+    return render(request, 'users/skill_form.html', context={'form': form})
+
+@login_required(login_url='login')
+def delete_skill(request, pk):
+    skillObj = request.user.profile.skill_set.get(id=pk)
+
+    if request.user.profile != skillObj.owner:
+        return HttpResponse('<h1>You are not allowed to delete someone\'s skill</h1>')
+
+    if request.method == "GET":
+        return render(request, 'delete_template.html', context={'obj': skillObj})
+    elif request.method == "POST":
+        skillObj.delete()
+        return redirect('account')
