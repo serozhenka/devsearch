@@ -1,15 +1,19 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
 from .models import Project
 from .forms import ProjectForm
-from django.http import HttpResponse
 from . import utils
-
-# Create your views here.
 
 def projectsHome(request):
     projects = utils.searchProjects(request)
-    return render(request, 'projects/projects.html', context={'projects': projects})
+    projects, paginator, custom_range = utils.paginateProjects(request, projects, results=5)
+
+    return render(request, 'projects/projects.html', context={
+        'projects': projects,
+        'paginator': paginator,
+        'custom_range': custom_range,
+    })
 
 def project(request, pk):
     projectObj = Project.objects.get(id=pk)

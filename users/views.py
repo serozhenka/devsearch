@@ -1,4 +1,3 @@
-from . import  utils
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.http import HttpResponse
@@ -7,11 +6,17 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from .models import Profile
 from .forms import UserRegisterForm, ProfileForm, SkillForm
+from . import utils
 
 def profilesPage(request):
     profiles = utils.searchProfiles(request)
+    profiles, paginator, custom_range = utils.paginateProfiles(request, profiles, results=3)
 
-    return render(request, 'users/profiles.html', context={'profiles': profiles, })
+    return render(request, 'users/profiles.html', context={
+        'profiles': profiles,
+        'paginator': paginator,
+        'custom_range': custom_range,
+    })
 
 def userProfile(request, pk):
     profile = Profile.objects.get(id=pk)
