@@ -7,7 +7,7 @@ from . import utils
 
 def projectsHome(request):
     projects = utils.searchProjects(request)
-    projects, paginator, custom_range = utils.paginateProjects(request, projects, results=5)
+    projects, paginator, custom_range = utils.paginateProjects(request, projects, results=6)
 
     return render(request, 'projects/projects.html', context={
         'projects': projects,
