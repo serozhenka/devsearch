@@ -537,11 +537,6 @@ img {
     border-top: 2px solid var(--color-light);
 }
 
-.comments .form label {
-    position: absolute;
-    margin: -9999px;
-}
-
 .commentList {
     margin: 3rem 0;
 }
@@ -870,4 +865,10 @@ img {
     display: inline-block;
     min-width: 65px;
     text-align: center;
+}
+
+.custom_field {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
 }

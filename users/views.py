@@ -4,8 +4,8 @@ from django.http import HttpResponse
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from .models import Profile
-from .forms import UserRegisterForm, ProfileForm, SkillForm
+from .models import Profile, Message
+from .forms import UserRegisterForm, ProfileForm, SkillForm, MessageForm
 from . import utils
 
 def profilesPage(request):
@@ -57,7 +57,7 @@ def loginPage(request):
             return redirect('profiles')
 
     elif request.method == "POST":
-        username = request.POST.get('username')
+        username = request.POST.get('username').lower()
         password = request.POST.get('password')
 
         try:
@@ -70,7 +70,7 @@ def loginPage(request):
 
         if user:
             login(request, user)
-            return redirect('profiles')
+            return redirect(request.GET.get('next') if 'next' in request.GET else 'profiles')
         else:
             messages.error(request, 'Username or password is incorrect')
 
@@ -143,3 +143,48 @@ def delete_skill(request, pk):
     elif request.method == "POST":
         skillObj.delete()
         return redirect('account')
+
+@login_required(login_url='login')
+def inbox(request):
+    message_objects = request.user.profile.messages.all()
+    unread_count = message_objects.filter(is_read=False).count()
+    return render(request, 'users/inbox.html', context={
+        'message_objects': message_objects,
+        'unread_count': unread_count,
+    })
+
+@login_required(login_url='login')
+def messagePage(request, pk):
+    try:
+        message_object = request.user.profile.messages.all().get(id=pk)
+    except:
+        return HttpResponse('<h1>You are not allowed to read someone\'s messages</h1>')
+
+    if not message_object.is_read:
+        message_object.is_read = True
+        message_object.save()
+
+    return render(request, 'users/message.html', context={'message': message_object})
+
+def send_message(request, pk):
+    recipient = Profile.objects.get(id=pk)
+
+    if request.method == "GET":
+        form = MessageForm()
+    elif request.method == "POST":
+        sender = request.user.profile if request.user.is_authenticated else None
+
+        form = MessageForm(request.POST)
+        if form.is_valid():
+            message = form.save(commit=False)
+            message.recipient = recipient
+            message.sender = sender
+
+            if sender:
+                message.name = sender.name
+                message.email = sender.email
+            message.save()
+            return redirect('user-profile', pk)
+
+    return render(request, 'users/message_form.html', context={'recipient': recipient, 'form': form})
+

@@ -1,4 +1,6 @@
 from django.db.models.signals import post_save, post_delete
+from django.core.mail import send_mail
+from django.conf import settings
 from django.dispatch import receiver
 from django.contrib.auth.models import User
 from .models import Profile
@@ -12,6 +14,18 @@ def createProfile(sender, instance, created, **kwargs):
             username=user.username,
             email=user.email,
             name=user.first_name,
+        )
+
+        send_mail(
+            subject='Registration to devsearch successful',
+            message=
+            f'''
+            We are glad to see you here, {profile.username}!
+            Wish you have the best experience out here!
+            ''',
+            from_email=settings.EMAIL_HOST_USER,
+            recipient_list=[profile.email],
+            fail_silently=False,
         )
 
 @receiver(post_delete, sender=Profile)

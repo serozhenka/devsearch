@@ -1,4 +1,5 @@
 import uuid
+import math
 from django.db import models
 from users.models import Profile
 
@@ -19,7 +20,21 @@ class Project(models.Model):
         return self.title
 
     class Meta:
-        ordering = ['-created']
+        ordering = ['-vote_ratio', '-vote_total', '-title']
+
+    def get_vote_count(self):
+        reviews = self.review_set.all()
+        up_votes = reviews.filter(value='up').count()
+        total_votes = reviews.count()
+        self.vote_total = total_votes
+        self.vote_ratio = math.ceil(up_votes / total_votes * 100)
+        self.save()
+
+        return self
+
+    def get_reviewers(self):
+        return self.review_set.all().values_list('owner__id', flat=True)
+
 
 class Review(models.Model):
     VOTE_TYPE = (
@@ -27,7 +42,7 @@ class Review(models.Model):
         ('down', 'Downvote')
     )
 
-    # owner =
+    owner = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True)
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     body = models.TextField(blank=True)
     value = models.CharField(max_length=256, choices=VOTE_TYPE)
@@ -37,6 +52,9 @@ class Review(models.Model):
     def __str__(self):
         return self.value
 
+    class Meta:
+        unique_together = [['owner', 'project']]
+
 class Tag(models.Model):
     name = models.CharField(max_length=128)
     created = models.DateTimeField(auto_now_add=True)
@@ -44,4 +62,5 @@ class Tag(models.Model):
 
     def __str__(self):
         return self.name
+
 

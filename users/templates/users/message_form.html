@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <!-- Main Section -->
+    <main class="formPage my-xl">
+        <div class="content-box">
+            <div class="formWrapper">
+                 <div style="display: flex; align-items: center;">
+                    <a class="backButton" href="{{ request.META.HTTP_REFERER }}"><i class="im im-angle-left"></i></a>
+                    <span style="font-weight: normal; font-size: 30px; margin-left: 10px">
+                        Message to <span style="font-weight: bold; font-size: 30px">{{ recipient.username }}</span>
+                    </span>
+                </div>
+
+                <form class="form" method="POST" action="">
+                    {% csrf_token %}
+
+                    {% if not request.user.is_authenticated %}
+                        <div class="form__field">
+                            <label for="formInput#text">{{ form.name.label }}</label>
+                            {{ form.name }}
+                        </div>
+
+                        <div class="form__field">
+                            <label for="formInput#text">{{ form.email.label }}</label>
+                            {{ form.email }}
+                        </div>
+                    {% endif %}
+
+                    <div class="form__field">
+                        <label for="formInput#text">{{ form.subject.label }}</label>
+                        {{ form.subject }}
+                    </div>
+
+                    <div class="form__field">
+                        <label for="formInput#text">{{ form.body.label }}</label>
+                        {{ form.body }}
+                    </div>
+
+                    <input class="btn btn--sub btn--lg  my-md" type="submit" value="Send" />
+                </form>
+            </div>
+        </div>
+    </main>
+{% endblock %}

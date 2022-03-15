@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.http import HttpResponse
+from django.db import IntegrityError
 from .models import Project
-from .forms import ProjectForm
+from .forms import ProjectForm, ReviewForm
 from . import utils
 
 def projectsHome(request):
@@ -17,7 +19,26 @@ def projectsHome(request):
 
 def project(request, pk):
     projectObj = Project.objects.get(id=pk)
-    return render(request, 'projects/single-project.html', context={'project': projectObj})
+
+    if request.method == "GET":
+        form = ReviewForm()
+        return render(request, 'projects/single-project.html', context={'project': projectObj, 'form': form})
+    elif request.method == "POST":
+        try:
+            form = ReviewForm(request.POST)
+            if form.is_valid():
+                review = form.save(commit=False)
+                review.owner = request.user.profile
+                review.project = projectObj
+                review.save()
+
+                projectObj.get_vote_count()
+                messages.success(request, 'Review successfully submitted')
+
+        except IntegrityError:
+            messages.error(request, 'Every user can create only one review per project')
+
+        return redirect('project', pk=pk)
 
 @login_required(login_url='login')
 def create_project(request):

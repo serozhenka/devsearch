@@ -9,7 +9,7 @@
                 <div class="column column--1of3">
                     <div class="card text-center">
                         <div class="card__body dev">
-                            <img class="avatar avatar--xl" src="https://avatars.githubusercontent.com/u/33843378" />
+                            <img class="avatar avatar--xl" src="{{ profile.image.url }}" />
                             <h2 class="dev__name">{{ profile.name }}</h2>
                             <p class="dev__title">{{ profile.headline }}</p>
 
@@ -49,7 +49,7 @@
                                 {% endif %}
                             </ul>
 
-                            <a href="#" class="btn btn--sub btn--lg">Send Message </a>
+                            <a href="{% url 'send-message' profile.id %}" class="btn btn--sub btn--lg">Send Message </a>
                         </div>
                     </div>
                 </div>
