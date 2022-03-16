@@ -7,7 +7,7 @@
         <div class="content-box">
             <div class="formWrapper">
                 <div style="display: flex; align-items: center">
-                    <a class="backButton" href="{{ request.META.HTTP_REFERER }}"><i class="im im-angle-left"></i></a>
+                    <a class="backButton" href="{% url 'account' %}"><i class="im im-angle-left"></i></a>
 
                     <span style="font-weight: bold; font-size: 3rem; margin-left: 2rem">
                         {% if form.instance.title %}
@@ -23,17 +23,26 @@
                     {% csrf_token %}
 
                     {% for field in form %}
-                    <div class="form__field">
-                        <label for="formInput#text">{{ field.label }} </label>
-                        {{ field }}
-{#                        <input class="input input--text" id="formInput#text" type="text" name="text"#}
-{#                            placeholder="" />#}
-                    </div>
+                        <div class="form__field">
+                            <label for="formInput#text">{{ field.label }} </label>
+                            {{ field }}
+    {#                        <input class="input input--text" id="formInput#text" type="text" name="text"#}
+    {#                            placeholder="" />#}
+                        </div>
 
                     {% endfor %}
 
                     <div class="form__field">
                         <label for="formInput#text">Tags</label>
+
+                        <div class="singleProject__toolStack">
+                            {% for tag in project.tags.all %}
+                                <span class="tag tag--pill tag--sub tag--lg tag--body">
+                                    <small>{{ tag.name }}  <span data-tag="{{ tag.id }}" data-project="{{ project.id }}" class="tag--cross" style="position: relative; right: -7px; display: none">&#215;</span></small>
+                                </span>
+                            {% endfor %}
+                        </div>
+
                         <textarea class="input" name="new_tags" id="" cols="30" rows="5" placeholder="Add new tags"></textarea>
                     </div>
 
@@ -42,5 +51,37 @@
             </div>
         </div>
     </main>
+
+    <script>
+        let tagBodies = document.getElementsByClassName('tag--body')
+        let tagCloseButtons = document.getElementsByClassName('tag--cross')
+        let k = 0
+
+        for(let i = 0; i < tagBodies.length; ++i) {
+            tagBodies[i].addEventListener('mouseover', (e) => {
+                tagCloseButtons[i].style.display = 'inline-block'
+            })
+            tagBodies[i].addEventListener('mouseout', (e) => {
+                tagCloseButtons[i].style.display = 'none'
+            })
+
+            tagCloseButtons[i].addEventListener('click', (e) => {
+                let tagId = e.target.dataset.tag
+                let projectId = e.target.dataset.project
+
+                fetch('http://localhost:8000/api/project/delete-tag/', {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body:JSON.stringify({'project': projectId, 'tag': tagId})
+                })
+                .then(response => response.json())
+                .then(data => {
+                    tagBodies[i].style.display = 'none'
+                })
+            })
+        }
+    </script>
 
 {% endblock %}

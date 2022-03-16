@@ -76,7 +76,7 @@
                                     <div class="comment">
                                         <a href="{% url 'user-profile' review.owner_id %}">
                                         <img class="avatar avatar--md"
-                                            src="{{ review.owner.image.url }}" alt="user" />
+                                            src="{{ review.owner.image_url }}" alt="user" />
                                         </a>
                                         <div class="comment__details">
                                             <a href="{% url 'user-profile' review.owner_id %}" class="comment__author">{{ review.owner.username }}</a>

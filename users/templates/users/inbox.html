@@ -15,7 +15,9 @@
                     <li class="message {% if not message.is_read %}message--unread{% endif %}">
                         <a href="{% url 'message' message.id %}">
                         <span class="message__author">
-                            {% if message.name %}
+                            {% if message.sender %}
+                                {{ message.sender.username }}
+                            {% elif message.name %}
                                 {{ message.name }}
                             {% else %}
                                 Unknown author

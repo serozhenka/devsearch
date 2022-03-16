@@ -72,7 +72,7 @@ def update_project(request, pk):
 
     if request.method == "GET":
         form = ProjectForm(instance=projectObj)
-        return render(request, 'projects/project_form.html', context={'form': form})
+        return render(request, 'projects/project_form.html', context={'form': form, 'project': projectObj})
     elif request.method == "POST":
         new_tags = request.POST.get('new_tags').replace(',', '').split()
 

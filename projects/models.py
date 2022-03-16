@@ -28,7 +28,7 @@ class Project(models.Model):
         try:
             url = self.featured_image.url
         except:
-            url = f"{settings.MEDIA_URL}images/default.jpg"
+            url = f"{settings.MEDIA_URL}project_images/default.jpg"
         return url
 
     def get_vote_count(self):
