@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import HttpResponse
 from django.db import IntegrityError
-from .models import Project
+from .models import Project, Tag
 from .forms import ProjectForm, ReviewForm
 from . import utils
 
@@ -48,11 +48,19 @@ def create_project(request):
 
     elif request.method == "POST":
         form = ProjectForm(request.POST, request.FILES)
+        new_tags = request.POST.get('new_tags').replace(',', '').split()
 
         if form.is_valid():
             projectObj = form.save(commit=False)
             projectObj.owner = request.user.profile
             projectObj.save()
+
+            for tag in new_tags:
+                if not Tag.objects.filter(name__iexact=tag):
+                    tagObj = Tag.objects.create(name=tag)
+                else:
+                    tagObj = Tag.objects.get(name__iexact=tag)
+                projectObj.tags.add(tagObj)
 
             return redirect('project', form.instance.id)
 
@@ -66,9 +74,18 @@ def update_project(request, pk):
         form = ProjectForm(instance=projectObj)
         return render(request, 'projects/project_form.html', context={'form': form})
     elif request.method == "POST":
+        new_tags = request.POST.get('new_tags').replace(',', '').split()
+
         form = ProjectForm(request.POST, request.FILES, instance=projectObj)
         if form.is_valid():
             form.save()
+            for tag in new_tags:
+                if not Tag.objects.filter(name__iexact=tag):
+                    tagObj = Tag.objects.create(name=tag)
+                else:
+                    tagObj = Tag.objects.get(name__iexact=tag)
+                projectObj.tags.add(tagObj)
+
             return redirect('project', projectObj.id)
 
 @login_required(login_url='login')
