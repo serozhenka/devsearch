@@ -29,13 +29,21 @@
                     {% endif %}
                 </div>
                 <div class="column column--2of3">
-                    <img class="singleProject__preview" src="{{ project.featured_image.url }}" alt="portfolio thumbnail" />
-                    <a href="{% url 'user-profile' project.owner.id %}" class="singleProject__developer">{{ project.owner.user.username }}</a>
+                    <img class="singleProject__preview" src="{{ project.image_url }}" alt="portfolio thumbnail" />
+                    <a href="{% if project.owner %}{% url 'user-profile' project.owner.id %}{% endif %}" class="singleProject__developer">
+                        {% if project.owner %}
+                            {{ project.owner.user.username }}
+                        {% else %}
+                            Unknown author
+                        {% endif %}
+                    </a>
                     <h2 class="singleProject__title">{{ project.title }}</h2>
-                    <h3 class="singleProject__subtitle">About the Project</h3>
-                    <div class="singleProject__info">
-                        {{ project.description }}
-                    </div>
+                    {% if project.description %}
+                        <h3 class="singleProject__subtitle">About the Project</h3>
+                        <div class="singleProject__info">
+                            {{ project.description }}
+                        </div>
+                    {% endif %}
                     <div class="comments">
                         <h3 class="singleProject__subtitle">Feedbacks</h3>
                         <h5 class="project--rating">

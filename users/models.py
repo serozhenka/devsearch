@@ -1,4 +1,5 @@
 import uuid
+from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -23,6 +24,14 @@ class Profile(models.Model):
 
     def __str__(self):
         return str(self.username)
+
+    @property
+    def image_url(self):
+        try:
+            url = self.image.url
+        except:
+            url = f'{settings.MEDIA_URL}profile_images/default.png'
+        return url
 
 class Skill(models.Model):
     owner = models.ForeignKey(Profile, on_delete=models.CASCADE)

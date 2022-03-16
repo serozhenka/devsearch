@@ -1,5 +1,6 @@
 import uuid
 import math
+from django.conf import settings
 from django.db import models
 from users.models import Profile
 
@@ -21,6 +22,14 @@ class Project(models.Model):
 
     class Meta:
         ordering = ['-vote_ratio', '-vote_total', '-title']
+
+    @property
+    def image_url(self):
+        try:
+            url = self.featured_image.url
+        except:
+            url = f"{settings.MEDIA_URL}images/default.jpg"
+        return url
 
     def get_vote_count(self):
         reviews = self.review_set.all()
